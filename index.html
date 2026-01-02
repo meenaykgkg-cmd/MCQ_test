@@ -2,26 +2,82 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>PDF MCQ Practice</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PDF MCQ Practice Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    #quiz {
+      background: white;
+      padding: 20px;
+      max-width: 700px;
+      margin: 20px auto;
+      border-radius: 8px;
+    }
+
+    #options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #result {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    #nextBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+    }
+
+    /* DEBUG AREA */
+    #debug {
+      margin-top: 20px;
+      padding: 10px;
+      background: #eee;
+      white-space: pre-wrap;
+      font-size: 12px;
+      max-height: 300px;
+      overflow: auto;
+      border-radius: 5px;
+    }
+  </style>
 </head>
+
 <body>
 
 <h2>📘 PDF MCQ Practice Test</h2>
 
+<!-- PDF Upload -->
 <input type="file" id="pdfUpload" accept="application/pdf">
 
-<div id="quiz" class="hidden">
+<!-- Quiz Area (later use) -->
+<div id="quiz" style="display:none;">
   <h3 id="question"></h3>
-
   <div id="options"></div>
-
   <p id="result"></p>
-
   <button id="nextBtn" disabled>Next Question</button>
 </div>
 
+<!-- DEBUG TEXT OUTPUT -->
+<h3>🔍 PDF Debug Text</h3>
+<div id="debug">PDF upload karo — yahan text dikhega</div>
+
+<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+<!-- script.js -->
 <script src="script.js"></script>
 
 </body>
