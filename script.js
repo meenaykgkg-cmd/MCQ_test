@@ -18,23 +18,101 @@ function handlePDF(e) {
     const typedarray = new Uint8Array(this.result);
 
     pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-      let textPromises = [];
+      let texts = [];
 
       for (let i = 1; i <= pdf.numPages; i++) {
-        textPromises.push(
-          pdf.getPage(i).then(page =>
-            page.getTextContent().then(tc =>
-              tc.items.map(item => item.str).join(" ")
+        texts.push(
+          pdf.getPage(i).then(p =>
+            p.getTextContent().then(tc =>
+              tc.items.map(it => it.str).join(" ")
             )
           )
         );
       }
 
-      Promise.all(textPromises).then(pagesText => {
-        extractMCQ(pagesText.join(" "));
+      Promise.all(texts).then(all => {
+        extractMCQ(all.join(" "));
+        if (questions.length === 0) {
+          alert("MCQ detect nahi huye. PDF format match nahi hua.");
+          return;
+        }
         quiz.classList.remove("hidden");
         showQuestion();
       });
+    });
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+function extractMCQ(text) {
+  questions = [];
+
+  let blocks = text.split(/\d+\./).slice(1);
+
+  blocks.forEach(b => {
+    let opts = b.match(/¼[vcln]½[^¼]+/g);
+    let ans = b.match(/¼([vcln])½\s*$/);
+
+    if (opts && ans && opts.length >= 4) {
+      let optionTexts = opts.map(o =>
+        o.replace(/¼[vcln]½/, "").trim()
+      );
+
+      let answerIndex = { v: 0, c: 1, l: 2, n: 3 }[ans[1]];
+
+      questions.push({
+        question: b.split("¼")[0].trim(),
+        options: optionTexts,
+        answer: optionTexts[answerIndex]
+      });
+    }
+  });
+}
+
+function showQuestion() {
+  let q = questions[current];
+  questionEl.innerText = `Q${current + 1}. ${q.question}`;
+  optionsEl.innerHTML = "";
+  resultEl.style.display = "none";
+  nextBtn.disabled = true;
+
+  q.options.forEach(opt => {
+    let btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = () => selectAnswer(btn, opt);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(btn, selected) {
+  let correct = questions[current].answer;
+  resultEl.style.display = "block";
+
+  Array.from(optionsEl.children).forEach(b => b.disabled = true);
+
+  if (selected === correct) {
+    btn.classList.add("correct");
+    resultEl.innerHTML = "✅ Correct Answer";
+  } else {
+    btn.classList.add("wrong");
+    resultEl.innerHTML = `❌ Wrong Answer<br>✅ Correct: ${correct}`;
+  }
+
+  nextBtn.disabled = false;
+}
+
+nextBtn.onclick = () => {
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    questionEl.innerText = "🎉 Test Completed";
+    optionsEl.innerHTML = "";
+    resultEl.innerText = "";
+    nextBtn.style.display = "none";
+  }
+};      });
     });
   };
 
