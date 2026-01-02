@@ -1,16 +1,7 @@
-let questions = [];
-let current = 0;
-
 const upload = document.getElementById("pdfUpload");
-const quiz = document.getElementById("quiz");
-const questionEl = document.getElementById("question");
-const optionsEl = document.getElementById("options");
-const resultEl = document.getElementById("result");
-const nextBtn = document.getElementById("nextBtn");
+const debug = document.getElementById("debug");
 
-upload.addEventListener("change", handlePDF);
-
-function handlePDF(e) {
+upload.addEventListener("change", e => {
   const file = e.target.files[0];
   const reader = new FileReader();
 
@@ -18,10 +9,10 @@ function handlePDF(e) {
     const typedarray = new Uint8Array(this.result);
 
     pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-      let pages = [];
+      let tasks = [];
 
       for (let i = 1; i <= pdf.numPages; i++) {
-        pages.push(
+        tasks.push(
           pdf.getPage(i).then(p =>
             p.getTextContent().then(tc =>
               tc.items.map(it => it.str).join(" ")
@@ -30,11 +21,14 @@ function handlePDF(e) {
         );
       }
 
-      Promise.all(pages).then(all => {
-        extractMCQ(all.join("\n"));
-        if (questions.length === 0) {
-          alert("MCQ detect nahi hue — PDF format abhi bhi match nahi hua");
-          return;
+      Promise.all(tasks).then(all => {
+        debug.textContent = all.join("\n\n");
+      });
+    });
+  };
+
+  reader.readAsArrayBuffer(file);
+});          return;
         }
         quiz.classList.remove("hidden");
         showQuestion();
