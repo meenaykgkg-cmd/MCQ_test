@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF MCQ Practice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>📘 PDF MCQ Practice Test</h2>
+
+<input type="file" id="pdfUpload" accept="application/pdf">
+
+<div id="quiz" class="hidden">
+  <h3 id="question"></h3>
+
+  <div id="options"></div>
+
+  <p id="result"></p>
+
+  <button id="nextBtn" disabled>Next Question</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
